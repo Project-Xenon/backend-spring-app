@@ -25,15 +25,9 @@ repositories {
 //sourceCompatibility = 1.8
 //targetCompatibility = 1.8
 
-plugins {
-    id 'net.ltgt.apt' version '0.10'
-}
-
 dependencies {
     compile "org.springframework.boot:spring-boot-starter-web"
     compile "org.springframework.boot:spring-boot-starter-actuator"
     testCompile "junit:junit"
     compile 'com.google.code.gson:gson:2.8.2'
-    compileOnly 'org.projectlombok:lombok:1.16.20'
-    apt "org.projectlombok:lombok:1.16.20"
 }
