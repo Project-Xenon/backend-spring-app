@@ -36,3 +36,7 @@ dependencies {
     compile "org.springframework:spring-jdbc"
     compile group: 'postgresql', name: 'postgresql', version: '9.1-901-1.jdbc4'
 }
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.6'
+}
