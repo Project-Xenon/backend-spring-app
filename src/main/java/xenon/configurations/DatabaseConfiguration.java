@@ -1,4 +1,4 @@
-package xenon;
+package xenon.configurations;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
