@@ -1,14 +1,15 @@
-package xenon.controllers;
+package ccsu.edu.club.cs.Xenon.Controllers;
 
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
-import xenon.models.UserModel;
-import xenon.models.UserStudentStanding;
+import ccsu.edu.club.cs.Xenon.Models.UserModel;
+import ccsu.edu.club.cs.Xenon.Models.UserStudentStanding;
 
 @RestController
+@RequestMapping("/api/test")
 public class HelloController {
 
     @Autowired

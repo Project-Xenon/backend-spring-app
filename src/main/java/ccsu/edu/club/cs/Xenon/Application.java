@@ -1,13 +1,27 @@
-package xenon;
+package ccsu.edu.club.cs.Xenon;
 
+import ccsu.edu.club.cs.Xenon.Models.CustomerModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.env.Environment;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
+
+import javax.sql.DataSource;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @SpringBootApplication
 public class Application{
@@ -19,13 +33,36 @@ public class Application{
     @Value("${SPRING_NAME}")
     private String name;
 
+    @Autowired
+    JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    Environment env;
+
+    @Autowired
+    DataSource dataSource;
+
 
     private static final Logger log = LoggerFactory.getLogger(Application.class);
 
     @Bean
     public CommandLineRunner commandLineRunner(ApplicationContext ctx) {
         return args -> {
-            System.out.printf("The application is running %s!", name);
+            System.out.printf("The application is running %s!\n", name);
+
+            // If the environment is dev, then run schema.sql to reinitialize the schema and repopulate test data
+            if(env.getActiveProfiles()[0].equalsIgnoreCase("dev")) {
+                Resource resource = new ClassPathResource("schema.sql");
+                ResourceDatabasePopulator databasePopulator = new ResourceDatabasePopulator(resource);
+                databasePopulator.execute(dataSource);
+            }
+
+            log.info("Querying for customer records where last_name = 'Gruber':");
+            jdbcTemplate.query(
+                    "SELECT id, first_name, last_name FROM customers WHERE last_name= ?",
+                    (rs, rowNum) -> new CustomerModel(rs.getLong("id"), rs.getString("first_name"), rs.getString("last_name")),
+                    "Gruber"
+            ).forEach(customer -> log.info(customer.toString()));
         };
     }
 
