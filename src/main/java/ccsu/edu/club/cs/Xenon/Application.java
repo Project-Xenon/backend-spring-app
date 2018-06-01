@@ -15,6 +15,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.sql.DataSource;
 import java.net.URL;
@@ -34,13 +35,16 @@ public class Application{
     private String name;
 
     @Autowired
-    JdbcTemplate jdbcTemplate;
+    private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    Environment env;
+    private Environment env;
 
     @Autowired
-    DataSource dataSource;
+    private DataSource dataSource;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
 
     private static final Logger log = LoggerFactory.getLogger(Application.class);
@@ -50,11 +54,22 @@ public class Application{
         return args -> {
             System.out.printf("The application is running %s!\n", name);
 
+            System.out.printf("The original password is: %s, and the hashed password is: %s\n", "pass1", passwordEncoder.encode("pass1"));
+            System.out.printf("The original password is: %s, and the hashed password is: %s\n", "pass2", passwordEncoder.encode("pass2"));
+            System.out.printf("The original password is: %s, and the hashed password is: %s\n", "pass3", passwordEncoder.encode("pass3"));
+
+
             // If the environment is dev, then run schema.sql to reinitialize the schema and repopulate test data
             if(env.getActiveProfiles()[0].equalsIgnoreCase("dev")) {
+                // Initialize schema
                 Resource resource = new ClassPathResource("schema.sql");
                 ResourceDatabasePopulator databasePopulator = new ResourceDatabasePopulator(resource);
                 databasePopulator.execute(dataSource);
+
+                // Fill data
+                Resource dataResource = new ClassPathResource("data.sql");
+                ResourceDatabasePopulator databasePopulatorData = new ResourceDatabasePopulator(dataResource);
+                databasePopulatorData.execute(dataSource);
             }
 
             log.info("Querying for customer records where last_name = 'Gruber':");

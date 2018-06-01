@@ -30,3 +30,5 @@ hs_err_pid*
 *.properties
 !gradle/wrapper/gradle-wrapper.properties
 *.yml
+
+build/
