@@ -1,4 +1,4 @@
-package xenon.models;
+package ccsu.edu.club.cs.Xenon.Models;
 
 public class UserModel {
     private final String firstName;
